@@ -26,4 +26,18 @@ model User {
   password String
   phone    String?
   gender   Gender?
+  capsules Capsule[]
+
+}
+
+model Capsule {
+  id String @id @default(uuid())
+  userId String 
+  user User @relation(fields: [userId] , references: [id]) 
+  title String 
+  content String 
+  image String?
+  open_time String
+  
+
 }
