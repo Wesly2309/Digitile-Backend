@@ -27,6 +27,7 @@ model User {
   phone    String?
   gender   Gender?
   capsules Capsule[]
+  geolocations Geolocation[]
 
 }
 
@@ -38,6 +39,19 @@ model Capsule {
   content String 
   image String?
   open_time String
+  geolocations Geolocation[]
   
 
 }
+
+model Geolocation {
+  id String @id @default(uuid())
+  userId String 
+  user User @relation(fields: [userId] , references: [id] )
+  capsuleId String 
+  capsule Capsule @relation(fields: [capsuleId] , references: [id])
+  clue String 
+  difficult_type String 
+  hint String?
+}
+
