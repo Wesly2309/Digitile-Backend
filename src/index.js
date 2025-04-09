@@ -5,6 +5,8 @@ const authRoutes = require('./routes/auth_routes')
 const userRoutes = require('./routes/user_routes')
 const capsuleRoutes = require('./routes/capsule_routes')
 const geolocationRoutes = require('./routes/geolocation_route')
+const logsRoute = require('./routes/logs_route')
+const missionRoutes = require('./routes/mission_routes')
 const bodyParser = require('body-parser')
 dotenv.config()
 
@@ -17,6 +19,8 @@ app.use('/auth' , authRoutes )
 app.use('/user' , userRoutes )
 app.use('/capsule' , capsuleRoutes)
 app.use('/geo-location' , geolocationRoutes)
+app.use('/logs' , logsRoute)
+app.use('/mission' , missionRoutes)
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

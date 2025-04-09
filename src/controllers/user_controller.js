@@ -56,7 +56,44 @@ const getUserById = async (req,res) => {
       })
   }
 }
+
+const updateProfile = async (req,res ) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1]
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+      if (decoded) {
+        const {name , username , phone , gender , email} = req.body
+      const user = await db.user.update({
+        data: {
+          username , name , phone  , email , gender
+        },
+      where: { id: decoded.id },
+      
+      }
+      
+      );
+      if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).json({success: true , message: 'Update profil success' , data: user});
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false ,
+      message: 'Internal Server Error' , 
+      error
+    })
+  }
+}
+
 module.exports = {
   getUserByToken,
-  getUserById
+  getUserById,
+  updateProfile
 };

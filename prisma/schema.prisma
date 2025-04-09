@@ -28,6 +28,8 @@ model User {
   gender   Gender?
   capsules Capsule[]
   geolocations Geolocation[]
+  logs Logs[]
+  
 
 }
 
@@ -40,6 +42,7 @@ model Capsule {
   image String?
   open_time String
   geolocations Geolocation[]
+  logs Logs[]
   
 
 }
@@ -53,5 +56,26 @@ model Geolocation {
   clue String 
   difficult_type String 
   hint String?
+}
+
+model Logs {
+  id String @id @default(uuid())
+  userId String 
+  user User @relation(fields:[userId] , references: [id])
+  capsuleId String 
+  capsule Capsule @relation(fields: [capsuleId] , references: [id])
+  open_at String 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Mission {
+  id String @id @default(uuid())
+  title String 
+  progressNo Int 
+  progressTarget Int 
+  isCompleted String 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 

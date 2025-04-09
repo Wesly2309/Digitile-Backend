@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
 const db = require('../utils/db')
+const dotenv = require('dotenv')
+dotenv.config()
 
 const getCapsules = async (req,res) => {
   try {
@@ -51,7 +53,6 @@ const createCapsule = async (req,res) => {
       })
     }
 
-    if(token) {
       const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
       const {title , content , open_time , image} = req.body
       const newCapsule = await db.capsule.create({
@@ -69,7 +70,6 @@ const createCapsule = async (req,res) => {
         message: 'Success create capsule',
         data: newCapsule
       })
-    }
   } catch (err) {
     return res.status(500).json({
       success: false,
