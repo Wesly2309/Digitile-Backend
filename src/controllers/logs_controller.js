@@ -29,7 +29,7 @@ const getLogs = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: 'Retrieving Logs',
-            data: logs, // ✅ Fixed: Correctly returning logs array
+            data: logs, 
         });
 
     } catch (err) {
