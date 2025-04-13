@@ -92,8 +92,48 @@ const updateProfile = async (req,res ) => {
   }
 }
 
+const deleteUser = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) throw new Error('Please provide a token');
+
+    const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
+    if (!verifyToken) throw new Error('Invalid token');
+
+    const id = req.params['id'];
+
+    if (verifyToken.id !== id) {
+      return res.status(403).json({
+        success: false,
+        message: 'Unauthorized to delete this user',
+      });
+    }
+
+    await db.capsule.deleteMany({
+      where: { userId: id },
+    });
+
+    const deletedUser = await db.user.delete({
+      where: { id },
+    });
+
+    console.log(deletedUser);
+    return res.status(200).json({
+      success: true,
+      message: 'Delete User success',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   getUserByToken,
   getUserById,
-  updateProfile
+  updateProfile,
+  deleteUser
 };
