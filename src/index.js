@@ -8,10 +8,11 @@ const geolocationRoutes = require('./routes/geolocation_route')
 const logsRoute = require('./routes/logs_route')
 const missionRoutes = require('./routes/mission_routes')
 const bodyParser = require('body-parser')
+const cors = require('cors')
 dotenv.config()
 
-const port = process.env.SERVER_PORT || 3001
 
+app.use(cors())
 app.use(express.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -22,6 +23,6 @@ app.use('/geo-location' , geolocationRoutes)
 app.use('/logs' , logsRoute)
 app.use('/mission' , missionRoutes)
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
-})
+
+
+module.exports = app

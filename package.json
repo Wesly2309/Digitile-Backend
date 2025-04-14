@@ -10,7 +10,8 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.2",
     "nodemon": "^3.1.9",
-    "prisma": "^6.4.1"
+    "prisma": "^6.4.1",
+    "serverless-http": "^3.2.0"
   },
   "name": "timecapsule-backend",
   "version": "1.0.0",
