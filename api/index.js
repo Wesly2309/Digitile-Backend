@@ -1,7 +1,7 @@
 const express = require('express');
 const serverless = require('serverless-http');
 const dotenv = require('dotenv');
-const authRoutes = require('../src/routes/auth_routes'); // Pastikan path sesuai dengan file Anda
+const authRoutes = require('../src/routes/auth_routes'); 
 const userRoutes = require('../src/routes/user_routes');
 const capsuleRoutes = require('../src/routes/capsule_routes');
 const geolocationRoutes = require('../src/routes/geolocation_route');
@@ -19,6 +19,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+    res.send('Hello World');
+  });
 
 // Definisikan rute-rute Anda
 app.use('/auth', authRoutes);
