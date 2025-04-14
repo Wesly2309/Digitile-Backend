@@ -3,26 +3,10 @@ const db = require('../utils/db');
 
 const getLogs = async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-
-        if (!token) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide a token',
-            });
-        }
-
-        const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
-        if (!verifyToken) {
-            return res.status(403).json({
-                success: false,
-                message: 'Invalid token',
-            });
-        }
-
+       
         const logs = await db.logs.findMany({
             where: {
-                userId: verifyToken.id,
+                userId: req.user.id,
             },
         });
 
@@ -43,23 +27,7 @@ const getLogs = async (req, res) => {
 
 const storeLog = async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-
-        if (!token) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide a token',
-            });
-        }
-
-        const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
-        if (!verifyToken) {
-            return res.status(403).json({
-                success: false,
-                message: 'Invalid token',
-            });
-        }
-
+     
         const { capsuleId } = req.body;
 
         if (!capsuleId) {
@@ -73,7 +41,7 @@ const storeLog = async (req, res) => {
             data: {
                 capsuleId,
                 open_at: new Date().toLocaleDateString('id-ID'),
-                userId: verifyToken.id,
+                userId: req.user.id,
             },
         });
 
@@ -94,29 +62,14 @@ const storeLog = async (req, res) => {
 
 const getLogDetails = async (req, res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-
-        if (!token) {
-            return res.status(400).json({
-                success: false,
-                message: 'Please provide a token',
-            });
-        }
-
-        const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
-        if (!verifyToken) {
-            return res.status(403).json({
-                success: false,
-                message: 'Invalid token',
-            });
-        }
+       
 
         const id = req.params.id;
 
         const logDetail = await db.logs.findFirst({
             where: {
                 id: id,
-                userId: verifyToken.id,
+                userId: req.user.id,
             },
         });
 

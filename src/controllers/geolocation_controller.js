@@ -4,21 +4,10 @@ const db = require('../utils/db')
 
 const getGeoLocations = async (req,res) => {
 try {
-    const token = req.headers.authorization?.split(' ')[1]
-
-    if(!token) {
-        return res.status(400).json({
-            success: false,
-            message: 'Please provide a token'
-        })
-    }
-
-    if(token) {
-        const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
-        if(verifyToken) {
+    
             const geolocations = await db.geolocation.findMany({
                 where: {
-                    userId: verifyToken.id 
+                    userId: req.user.id 
                 } , 
                 include: {
                     capsule: true
@@ -30,10 +19,7 @@ try {
                 message: 'List of Geo Locations',
                 data: geolocations
             })
-        } else {
-            throw new Error('User is not valid')
-        }
-    }
+
 
 
 } catch (err) {
@@ -47,14 +33,9 @@ try {
 
 const storeGeoLocation = async (req,res ) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]
 
 
-        if(token) {
-            const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
-            
-            
-            if(verifyToken) {
+       
                 const {capsuleId , clue , hint , difficult_type} = req.body 
                 if(!capsuleId) {
                     return res.status(400).json({
@@ -66,7 +47,7 @@ const storeGeoLocation = async (req,res ) => {
                     data: {
                         capsuleId , 
                         clue , 
-                        userId: verifyToken.id , 
+                        userId: req.user.id , 
                         hint , 
                         difficult_type
                     }
@@ -79,12 +60,6 @@ const storeGeoLocation = async (req,res ) => {
                     message: 'Geo Location Created',
                     data: newGeolocation
                 })
-            } else {
-                throw new Error('Token is not valid')
-            }
-        }else {
-            throw new Error('Please provide a token')
-        }
     } catch (err) {
         return res.status(500).json({
             success: false,
@@ -96,15 +71,12 @@ const storeGeoLocation = async (req,res ) => {
 
 const detailGeoLocation = async (req,res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]
-        if(token) {
-            const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
-            if(verifyToken) {
+       
                 const id = req.params['id'] 
                 const detailGeo = await db.geolocation.findFirst({
                     where: {
                         id: id , 
-                        userId : verifyToken.id
+                        userId : req.user.id
                     },
                     include: {
                         capsule: true
@@ -117,12 +89,7 @@ const detailGeoLocation = async (req,res) => {
                     data: detailGeo
                 })
 
-            } else {
-                throw new Error('Invalid token')
-            }
-        }else {
-            throw new Error('Please provide a token')
-        }
+            
     } catch (err) {
         return res.status(500).json({
             success: false,
@@ -134,16 +101,13 @@ const detailGeoLocation = async (req,res) => {
 
 const updateGeoLocation = async (req,res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]
-        if(token) {
-            const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
-            if(verifyToken) {
+       
                 const id = req.params['id']
                 const {clue , hint  , capsuleId , difficult_type} = req.body 
                 const updatedGeo = await db.geolocation.update({
                     where: {
                         id: id , 
-                        userId: verifyToken.id 
+                        userId: req.user.id 
                     },
                     data: {
                         clue , hint , capsuleId , difficult_type
@@ -154,12 +118,6 @@ const updateGeoLocation = async (req,res) => {
                     message: 'Success update geo location',
                     data: updatedGeo
                 })
-            } else {
-                throw new Error('Invalid token')
-            }
-        } else {
-            throw new Error('Please provide a token')
-        }
     } catch (err) {
         return res.status(500).json({
             success: false,
@@ -171,28 +129,22 @@ const updateGeoLocation = async (req,res) => {
 
 const deleteGeoLocation = async (req,res) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]
-        if(token) {
-            const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
-            if(verifyToken) {
+       
                 const id = req.params['id']
-                const deletedGeo = await db.geolocation.delete({
+               await db.geolocation.delete({
                     where: {
                         id, 
-                        userId: verifyToken.id
+                        userId: req.user.id
                     }
-                })
-                console.log(deletedGeo)
+                }).then(() => {
+                    
                 return res.status(200).json({
                     success: true,
                     message: 'Delete geo location success'
                 })
-            }else {
-                throw new Error('Invalid token')
-            }
-        } else {
-            throw new Error('Please provide a token')
-        }
+                })
+
+          
     } catch (err) {
         return res.status(500).json({
             success: false,

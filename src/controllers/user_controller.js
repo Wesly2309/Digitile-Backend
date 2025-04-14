@@ -2,17 +2,9 @@ const jwt = require('jsonwebtoken');
 const db = require('../utils/db');
 const getUserByToken = async (req, res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (decoded) {
-      console.log(decoded)
+    
       const user = await db.user.findUnique({
-      where: { id: decoded.id },
+      where: { id: req.user.id },
       
       }
       
@@ -22,7 +14,6 @@ const getUserByToken = async (req, res) => {
     }
 
     res.json(user);
-    }
 
 
 
@@ -41,7 +32,6 @@ const getUserById = async (req,res) => {
     })
 
 
-    console.log(user)
     return res.status(200).json({
       success: true , 
       message: 'Detail User By Id',
@@ -59,20 +49,13 @@ const getUserById = async (req,res) => {
 
 const updateProfile = async (req,res ) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if (!token) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      if (decoded) {
+   
         const {name , username , phone , gender , email} = req.body
       const user = await db.user.update({
         data: {
           username , name , phone  , email , gender
         },
-      where: { id: decoded.id },
+      where: { id: req.user.id },
       
       }
       
@@ -82,7 +65,6 @@ const updateProfile = async (req,res ) => {
     }
 
     return res.status(200).json({success: true , message: 'Update profil success' , data: user});
-    }
   } catch (error) {
     return res.status(500).json({
       success: false ,

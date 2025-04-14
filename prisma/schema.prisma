@@ -29,7 +29,6 @@ model User {
   capsules Capsule[]
   geolocations Geolocation[]
   logs Logs[]
-  mission Mission[]
 }
 
 model Capsule {
@@ -70,8 +69,6 @@ model Logs {
 
 model Mission {
   id String @id @default(uuid())
-  userId String 
-  user User @relation(fields:[userId] , references: [id])
   title String 
   progressNo Int 
   progressTarget Int 

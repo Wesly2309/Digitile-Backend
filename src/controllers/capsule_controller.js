@@ -1,38 +1,33 @@
-const jwt = require('jsonwebtoken')
 const db = require('../utils/db')
+const cloudinary = require('../utils/cloudinary')
 const dotenv = require('dotenv')
+const fs = require('fs')
 dotenv.config()
+
+
+
 
 const getCapsules = async (req,res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]
-
-    if(!token) {
-       return res.status(400).json({
-        success: false,
-        message: 'Please provide a token'
-      })
-    }
-    if(token) {
-      const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
-      console.log(verifyToken)
-      if(verifyToken) {
+    
         const capsules = await db.capsule.findMany({
           include: {
-            user: true
+            user: {
+              select: {
+                name: true 
+              }
+            }
           },
           where: {
-            userId: verifyToken.id
+            userId: req.user.id
           }
         })
     
          return res.status(200).json({
           success: true,
-          message: `List of Capsule with the user name is ${verifyToken.name}`,
+          message: `List of Capsule with the user name is ${req.user.name}`,
           data: capsules 
         })
-      }
-    } 
     
   } catch (err) {
     return res.status(500).json({
@@ -45,23 +40,19 @@ const getCapsules = async (req,res) => {
 
 const createCapsule = async (req,res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]
-    if(!token) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please Provide a token'
+    console.log(req.file)
+      const result = await cloudinary.uploader.upload(req.file.path , {
+        folder: 'uploads'
       })
-    }
-
-      const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
-      const {title , content , open_time , image} = req.body
+      const {title , content , open_time} = req.body
+      fs.unlinkSync(req.file.path);
       const newCapsule = await db.capsule.create({
         data: {
-         userId: verifyToken.id ,
+         userId: req.user.id ,
          title ,
          content,
          open_time ,
-         image 
+         image: result.secure_url 
         },
       })
 
@@ -81,25 +72,20 @@ const createCapsule = async (req,res) => {
 
 const detailCapsule = async (req,res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]
-
-    if(!token) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide a token'
-      })
-    }
-    if(token) {
-      const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
+    
     const id = req.params['id']
 
       const detailedCapsule = await db.capsule.findFirst({
         where: {
           id: id , 
-          userId: verifyToken.id
+          userId: req.user.id
         },
         include: {
-          user: true
+          user: {
+            select: {
+              name: true
+            }
+          }
         }
       })
 
@@ -110,7 +96,6 @@ const detailCapsule = async (req,res) => {
       })
       
 
-    }
     
   } catch (err) {
     return res.status(500).json({
@@ -123,17 +108,7 @@ const detailCapsule = async (req,res) => {
 
 const updateCapsule = async (req,res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]
-
-    if(!token) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide a token'
-      })
-    }
-
-    if(token) {
-        const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
+    
         const id = req.params['id']
         const {title  , content , image , open_time} = req.body
         const updatedCurrentCapsule = await db.capsule.update({
@@ -143,7 +118,7 @@ const updateCapsule = async (req,res) => {
           },
           where: {
             id: id ,
-            userId: verifyToken.id
+            userId: req.user.id
           }
         }        
         )
@@ -152,7 +127,6 @@ const updateCapsule = async (req,res) => {
           message:'Success update capsule',
           data: updatedCurrentCapsule
         })
-    }
 
    
   } catch (err) {
@@ -166,22 +140,12 @@ const updateCapsule = async (req,res) => {
 
 const deleteCapsule = async (req,res) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1]
     
-    if(!token) {
-      return res.status(400).json({
-        success: false,
-        message: 'Please provide a token'
-      })
-    }
-
-    if(token) {
-      const verifyToken = jwt.verify(token , process.env.JWT_SECRET)
       const id = req.params['id']
       await db.capsule.delete({
         where: {
           id: id , 
-          userId: verifyToken.id
+          userId: req.user.id
         }
       }).then(() => {
         return res.status(200).json({
@@ -190,7 +154,6 @@ const deleteCapsule = async (req,res) => {
 
         })
       })
-    }
   } catch (err) {
     return res.status(500).json({
       success: false,
