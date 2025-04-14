@@ -32,5 +32,4 @@ app.use('/geo-location', geolocationRoutes);
 app.use('/logs', logsRoute);
 app.use('/mission', missionRoutes);
 
-// Ekspor aplikasi Express sebagai serverless function menggunakan serverless-http
 module.exports.handler = serverless(app);
