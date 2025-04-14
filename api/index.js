@@ -1,5 +1,8 @@
-// api/index.js
-const serverless = require("serverless-http");
-const app = require('../src/index')
+const express = require('express')
+const serverless = require('serverless-http')
+
+const app = express()
+
+
 
 module.exports.handler = serverless(app);
