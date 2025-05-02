@@ -13,7 +13,11 @@ const getUserByToken = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json(user);
+     return res.status(200).json({
+      success: true , 
+      message: 'Detail User By Token',
+      data: user
+    })
 
 
 
