@@ -24,6 +24,7 @@ model User {
   username String
   email    String
   password String
+  profile String?
   phone    String?
   gender   Gender?
   capsules Capsule[]

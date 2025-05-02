@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
 const db = require('../utils/db');
+const fs = require('fs')
+const cloudinary = require('../utils/cloudinary')
+
 const getUserByToken = async (req, res) => {
   try {
     
@@ -55,9 +58,12 @@ const updateProfile = async (req,res ) => {
   try {
    
         const {name , username , phone , gender , email} = req.body
+          const result = await cloudinary.uploader.upload(req.file.path , {
+                folder: 'uploads'
+              })
       const user = await db.user.update({
         data: {
-          username , name , phone  , email , gender
+          username , name , phone  , email , gender , profile: result.secure_url
         },
       where: { id: req.user.id },
       
@@ -70,10 +76,11 @@ const updateProfile = async (req,res ) => {
 
     return res.status(200).json({success: true , message: 'Update profil success' , data: user});
   } catch (error) {
+    console.log(error)
     return res.status(500).json({
       success: false ,
       message: 'Internal Server Error' , 
-      error
+      error: error.message
     })
   }
 }
