@@ -52,8 +52,11 @@ model Geolocation {
   user User @relation(fields: [userId] , references: [id] )
   capsuleId String 
   capsule Capsule @relation(fields: [capsuleId] , references: [id])
+  
   clue String 
   difficult_type String 
+  latitude Float 
+  longitude Float 
   hint String?
 }
 

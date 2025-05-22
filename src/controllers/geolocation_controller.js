@@ -35,7 +35,7 @@ const storeGeoLocation = async (req,res ) => {
 
 
        
-                const {capsuleId , clue , hint , difficult_type} = req.body 
+                const {capsuleId , clue , hint , difficult_type , latitude , longitude} = req.body 
                 if(!capsuleId) {
                     return res.status(400).json({
                         success: false,
@@ -48,6 +48,8 @@ const storeGeoLocation = async (req,res ) => {
                         clue , 
                         userId: req.user.id , 
                         hint , 
+                        latitude,
+                longitude,
                         difficult_type
                     }
                 })
