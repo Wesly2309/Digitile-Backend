@@ -30,45 +30,61 @@ try {
 }
 }
 
-const storeGeoLocation = async (req,res ) => {
-    try {
+const storeGeoLocation = async (req, res) => {
+  try {
+    const { capsuleId, clue, hint, difficult_type, latitude, longitude } = req.body;
 
-
-       
-                const {capsuleId , clue , hint , difficult_type , latitude , longitude} = req.body 
-                if(!capsuleId) {
-                    return res.status(400).json({
-                        success: false,
-                        message: 'Capsule is required'
-                    })
-                }
-                const newGeolocation = await db.geolocation.create({
-                    data: {
-                        capsuleId , 
-                        clue , 
-                        userId: req.user.id , 
-                        hint , 
-                        latitude,
-                longitude,
-                        difficult_type
-                    }
-                })
-
-                
-
-                return res.status(201).json({
-                    success: true ,
-                    message: 'Geo Location Created',
-                    data: newGeolocation
-                })
-    } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: 'Internal Server Error',
-            error: err.message
-        })
+    if (!capsuleId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Capsule is required',
+      });
     }
-}
+
+    // Cek apakah req.user tersedia
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'Unauthorized - User ID not found from token',
+      });
+    }
+
+    // Opsional: validasi bahwa user ID memang ada di database
+    const userExists = await db.user.findUnique({ where: { id: req.user.id } });
+    if (!userExists) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found in database',
+      });
+    }
+
+    const newGeolocation = await db.geolocation.create({
+      data: {
+        capsuleId,
+        clue,
+        userId: req.user.id, // pastikan ini valid
+        hint,
+        latitude,
+        longitude,
+        difficult_type,
+      },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: 'Geo Location Created',
+      data: newGeolocation,
+    });
+  } catch (err) {
+    console.error('Create GeoLocation Error:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: err.message,
+    });
+  }
+};
+
 
 const detailGeoLocation = async (req,res) => {
     try {
