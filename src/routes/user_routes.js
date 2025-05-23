@@ -7,6 +7,6 @@ const router = express.Router()
 router.use(tokenMiddleware)
 router.get('/', getUserByToken)
 router.get('/:id'  , getUserById)
-router.put('/update' ,  upload.single('profile') , updateProfile)
+router.patch('/update' ,  upload.single('profile') , updateProfile)
 
 module.exports = router
