@@ -54,36 +54,58 @@ const getUserById = async (req,res) => {
   }
 }
 
-const updateProfile = async (req,res ) => {
+const updateProfile = async (req, res) => {
   try {
-   
-        const {name , username , phone , gender , email} = req.body
-          const result = await cloudinary.uploader.upload(req.file.path , {
-                folder: 'uploads'
-              })
-      const user = await db.user.update({
-        data: {
-          username , name , phone  , email , gender , profile: result.secure_url
-        },
+    const { name, username, phone, gender, email } = req.body;
+
+    let profileUrl;
+
+    // ✅ Upload hanya jika file dikirim
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'uploads',
+      });
+      profileUrl = result.secure_url;
+    }
+
+    // ✅ Siapkan data update
+    const updateData = {
+      username,
+      name,
+      phone,
+      email,
+      gender,
+    };
+
+    // ✅ Tambahkan field profile hanya jika ada
+    if (profileUrl) {
+      updateData.profile = profileUrl;
+    }
+
+    const user = await db.user.update({
+      data: updateData,
       where: { id: req.user.id },
-      
-      }
-      
-      );
-      if (!user) {
+    });
+
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    return res.status(200).json({success: true , message: 'Update profil success' , data: user});
+    return res.status(200).json({
+      success: true,
+      message: 'Update profile success',
+      data: user,
+    });
   } catch (error) {
-    console.log(error)
+    console.error(error);
     return res.status(500).json({
-      success: false ,
-      message: 'Internal Server Error' , 
-      error: error.message
-    })
+      success: false,
+      message: 'Internal Server Error',
+      error: error.message,
+    });
   }
-}
+};
+
 
 
 module.exports = {
