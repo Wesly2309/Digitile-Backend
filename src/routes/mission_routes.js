@@ -3,8 +3,8 @@ const { getMission, storeMission, getMissionDetails, complete , getAllMission  }
 const tokenMiddleware = require('../utils/middleware')
 const router = express.Router();
 
-router.use(tokenMiddleware)
 router.get('/list', getAllMission )
+router.use(tokenMiddleware)
 router.get('/', getMission);
 router.post('/store', storeMission); 
 router.get('/detail/:id', getMissionDetails); 
