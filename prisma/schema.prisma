@@ -19,65 +19,69 @@ enum Gender {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  name     String
-  username String
-  email    String
-  password String
-  profile String?
-  phone    String?
-  gender   Gender?
-  capsules Capsule[]
+  id           String        @id @default(uuid())
+  name         String
+  username     String
+  email        String
+  password     String
+  profile      String?
+  phone        String?
+  title        String?
+  level        Int?          @default(0)
+  points       Int?          @default(0)
+  gender       Gender?
+  capsules     Capsule[]
   geolocations Geolocation[]
-  logs Logs[]
+  logs         Logs[]
+  missions     Mission[]
 }
 
 model Capsule {
-  id String @id @default(uuid())
-  userId String 
-  user User @relation(fields: [userId] , references: [id]) 
-  title String 
-  content String 
-  image String?
-  open_time String
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  title        String
+  content      String
+  image        String?
+  open_time    String
   geolocations Geolocation[]
-  logs Logs[]
-  
-
+  logs         Logs[]
 }
 
 model Geolocation {
-  id String @id @default(uuid())
-  userId String 
-  user User @relation(fields: [userId] , references: [id] )
-  capsuleId String 
-  capsule Capsule @relation(fields: [capsuleId] , references: [id])
-  
-  clue String 
-  difficult_type String 
-  latitude Float 
-  longitude Float 
-  hint String?
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  capsuleId String
+  capsule   Capsule @relation(fields: [capsuleId], references: [id])
+
+  clue           String
+  difficult_type String
+  latitude       Float
+  longitude      Float
+  hint           String?
 }
 
 model Logs {
-  id String @id @default(uuid())
-  userId String 
-  user User @relation(fields:[userId] , references: [id])
-  capsuleId String 
-  capsule Capsule @relation(fields: [capsuleId] , references: [id])
-  open_at String 
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  capsuleId String
+  capsule   Capsule  @relation(fields: [capsuleId], references: [id])
+  open_at   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Mission {
-  id String @id @default(uuid())
-  title String 
-  progressNo Int 
-  progressTarget Int 
-  isCompleted String 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  title          String
+  progressNo     Int
+  progressTarget Int
+  isCompleted    String
+  rewardPoints   Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
-
