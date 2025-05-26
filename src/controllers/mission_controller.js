@@ -82,7 +82,6 @@ const storeMission = async (req, res) => {
 
     const newMission = await db.mission.create({
       data: {
-        userId: req.user.id, // Pastikan userId disertakan saat membuat misi
         title,
         progressNo,
         progressTarget,
