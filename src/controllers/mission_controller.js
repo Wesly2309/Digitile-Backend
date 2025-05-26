@@ -34,25 +34,22 @@ async function givePointsAndCheckLevel(userId, pointsToAdd) {
   }
 }
 
-
-const getAllMission = async (req,res) => {
-  try{
-    const allmissions = await db.mission.findMany()
+const getAllMission = async (req, res) => {
+  try {
+    const allmissions = await db.mission.findMany();
     return res.status(200).json({
       success: true,
-      message: 'List of all mission',
-      data: allmissions
-    })
-  }catch(err) {
+      message: "List of all mission",
+      data: allmissions,
+    });
+  } catch (err) {
     return res.status(500).json({
-      success: false , 
-      message: 'Internal Server Error',
-      error: err.message
-    })
+      success: false,
+      message: "Internal Server Error",
+      error: err.message,
+    });
   }
-}
-
-
+};
 
 const getMission = async (req, res) => {
   try {
@@ -86,7 +83,7 @@ const storeMission = async (req, res) => {
         progressNo,
         progressTarget,
         isCompleted: "NO",
-        rewardPoints: rewardPoints || 0, // Default rewardPoints ke 0 jika tidak disediakan
+        rewardPoints: rewardPoints, // Default rewardPoints ke 0 jika tidak disediakan
       },
     });
 
@@ -98,11 +95,11 @@ const storeMission = async (req, res) => {
     return res
       .status(201)
       .json({ success: true, message: "Mission created", data: newMission });
-  } catch (error) {
+  } catch (err) {
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
-      error,
+      error: err.message,
     });
   }
 };
