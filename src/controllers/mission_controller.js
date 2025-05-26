@@ -34,7 +34,25 @@ async function givePointsAndCheckLevel(userId, pointsToAdd) {
   }
 }
 
-const getallMissions = async (req,res) => { const missions = await db.mission.findMany() return res.status(200).json({success: true , message: 'List of Mission' , data: missions })  }
+
+const getAllMission = async (req,res) => {
+  try{
+    const allmissions = await db.mission.findMany()
+    return res.status(200).json({
+      success: true,
+      message: 'List of all mission',
+      data: allmissions
+    })
+  }catch(err) {
+    return res.status(500).json({
+      success: false , 
+      message: 'Internal Server Error',
+      error: err.message
+    })
+  }
+}
+
+
 
 const getMission = async (req, res) => {
   try {
@@ -189,7 +207,7 @@ const complete = async (req, res) => {
 };
 
 module.exports = {
-  getallMissions,
+  getAllMission,
   getMission,
   storeMission,
   getMissionDetails,
