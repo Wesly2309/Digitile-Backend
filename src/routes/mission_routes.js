@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.get('/list', getAllMission )
 router.post('/store', storeMission); 
+
+
 router.use(tokenMiddleware)
 router.get('/', getMission);
 router.get('/detail/:id', getMissionDetails); 
