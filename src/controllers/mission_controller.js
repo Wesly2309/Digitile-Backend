@@ -34,6 +34,8 @@ async function givePointsAndCheckLevel(userId, pointsToAdd) {
   }
 }
 
+const getallMissions = async (req,res) => { const missions = await db.mission.findMany() return res.status(200).json({success: true , message: 'List of Mission' , data: missions })  }
+
 const getMission = async (req, res) => {
   try {
     const missions = await db.mission.findMany({
@@ -187,6 +189,7 @@ const complete = async (req, res) => {
 };
 
 module.exports = {
+  getallMissions,
   getMission,
   storeMission,
   getMissionDetails,
