@@ -4,9 +4,9 @@ const tokenMiddleware = require('../utils/middleware')
 const router = express.Router();
 
 router.get('/list', getAllMission )
+router.post('/store', storeMission); 
 router.use(tokenMiddleware)
 router.get('/', getMission);
-router.post('/store', storeMission); 
 router.get('/detail/:id', getMissionDetails); 
 router.put('/complete/:id' , complete)
 
