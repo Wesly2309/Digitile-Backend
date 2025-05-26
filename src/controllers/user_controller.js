@@ -3,6 +3,18 @@ const db = require('../utils/db');
 const fs = require('fs')
 const cloudinary = require('../utils/cloudinary')
 
+const getAllUsers = async (req,res) => {
+
+  try{
+  const users = await db.user.findMany()
+  return res.status(200).json({success: true , message: 'List of Users' , data: users })
+    
+  }catch(err){
+    return res.status(500).json({success: false , message: 'Internal Server Error' , error: err.message})
+  }
+
+}
+
 const getUserByToken = async (req, res) => {
   try {
     
@@ -112,4 +124,5 @@ module.exports = {
   getUserByToken,
   getUserById,
   updateProfile,
+  getAllUsers,
 };
