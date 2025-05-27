@@ -7,9 +7,9 @@ dotenv.config()
 
 const register = async  (req, res)  => {
   try {
-    const { name, username, email, password } = req.body
+    const { name, username, email, password , phone } = req.body
 
-    if (!name | !username | !email | !password ) {
+    if (!name | !username | !email | !password | !phone ) {
          return res.status(400).json({
         success: false,
         message: 'All fields are required',
@@ -17,7 +17,7 @@ const register = async  (req, res)  => {
     } else {
       const existingUser = await db.user.findFirst({
         where: {
-          username: username
+          email: email
         }
       })
 
@@ -33,6 +33,7 @@ const register = async  (req, res)  => {
           data: {
             name,
             username,
+            phone,
             email,
             password: hashedPassword,
             
