@@ -165,10 +165,10 @@ const complete = async (req, res) => {
 
 
     const incrementValue =
-      userMission.progressNo == 0 ? 0 : userMission.progressNo < userMission.mission.progressTarget ? 1 : 0;
-    const newProgress = userMission.progressNo == 0 ? 0 : userMission.progressNo + incrementValue;
+       userMission.progressNo < userMission.mission.progressTarget ? 1 : 0;
+    const newProgress = userMission.progressNo + incrementValue;
     const isCompleted =
-      newProgress >= userMission.mission.progressTarget ? "YES" : "NO";
+      newProgress >= userMission.mission.progressTarget ? true : false;
 
     const updatedUserMission = await db.userMission.update({
       where: { id: userMission.id },
@@ -181,7 +181,7 @@ const complete = async (req, res) => {
     });
 
     // Jika misi selesai, berikan reward poin dan cek level
-    if (isCompleted === "YES") {
+    if (isCompleted === true) {
       await givePointsAndCheckLevel(
         userId,
         userMission.mission.rewardPoints || 0
