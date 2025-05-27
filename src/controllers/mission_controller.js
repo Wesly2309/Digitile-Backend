@@ -165,8 +165,8 @@ const complete = async (req, res) => {
 
 
     const incrementValue =
-      userMission.progressNo < userMission.mission.progressTarget ? 1 : 0;
-    const newProgress = userMission.progressNo + incrementValue;
+      userMission.progressNo == 0 ? 0 : userMission.progressNo < userMission.mission.progressTarget ? 1 : 0;
+    const newProgress = userMission.progressNo == 0 ? 0 : userMission.progressNo + incrementValue;
     const isCompleted =
       newProgress >= userMission.mission.progressTarget ? "YES" : "NO";
 
