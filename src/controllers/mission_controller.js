@@ -202,7 +202,7 @@ const complete = async (req, res) => {
   }
 };
 
-export const assignAllMissionsToUser = async (userId) => {
+ const assignAllMissionsToUser = async (userId) => {
   try {
     const allMissions = await db.mission.findMany();
 
@@ -228,7 +228,7 @@ export const assignAllMissionsToUser = async (userId) => {
 
     return { success: true, message: "All missions assigned to user" };
   } catch (error) {
-    console.error("Failed to assign missions:", error);
+    console.log("Failed to assign missions:", error);
     throw error;
   }
 };
@@ -240,4 +240,5 @@ module.exports = {
   storeMission,
   getMissionDetails,
   complete,
+  assignAllMissionsToUser
 };
