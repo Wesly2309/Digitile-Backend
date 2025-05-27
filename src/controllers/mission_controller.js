@@ -154,18 +154,24 @@ const getMissionDetails = async (req, res) => {
 
 const complete = async (req, res) => {
   try {
-    const id = req.params['id'] ;
+    const id = req.params['id'];
     const userId = req.user.id;
 
     const userMission = await db.userMission.findFirst({
-      where: { userId , missionId: String(id) },
+      where: { userId, missionId: String(id) },
       include: { mission: true },
     });
 
-
+    // ✅ Cek jika userMission tidak ditemukan
+    if (!userMission) {
+      return res.status(404).json({
+        success: false,
+        message: 'UserMission not found for this user and mission',
+      });
+    }
 
     const incrementValue =
-       userMission.progressNo < userMission.mission.progressTarget ? 1 : 0;
+      userMission.progressNo < userMission.mission.progressTarget ? 1 : 0;
     const newProgress = userMission.progressNo + incrementValue;
     const isCompleted =
       newProgress >= userMission.mission.progressTarget ? true : false;
@@ -180,7 +186,6 @@ const complete = async (req, res) => {
       },
     });
 
-    // Jika misi selesai, berikan reward poin dan cek level
     if (isCompleted === true) {
       await givePointsAndCheckLevel(
         userId,
@@ -190,17 +195,18 @@ const complete = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Mission progress updated",
+      message: 'Mission progress updated',
       data: updatedUserMission,
     });
   } catch (err) {
     return res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: 'Internal Server Error',
       error: err.message,
     });
   }
 };
+
 
  const assignAllMissionsToUser = async (userId) => {
   try {
