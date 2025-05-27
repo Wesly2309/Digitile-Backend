@@ -34,41 +34,35 @@ async function givePointsAndCheckLevel(userId, pointsToAdd) {
   }
 }
 
-const getAllMission = async (req, res) => {
+const getMission = async (req, res) => {
   try {
-    const allmissions = await db.mission.findMany();
+    const existing = await db.userMission.findMany({
+      where: { userId: req.user.id },
+      include: {
+        mission: true,
+      },
+    });
+
+    if (existing.length === 0) {
+      // Jika belum ada userMission, tampilkan semua mission yang ada
+      const allMissions = await db.mission.findMany();
+      return res.status(200).json({
+        success: true,
+        message: "List of all missions (no user missions found)",
+        data: allMissions,
+      });
+    }
+
     return res.status(200).json({
       success: true,
-      message: "List of all mission",
-      data: allmissions,
+      message: "List of user missions",
+      data: existing,
     });
   } catch (err) {
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
       error: err.message,
-    });
-  }
-};
-
-const getMission = async (req, res) => {
-  try {
-    const missions = await db.mission.findMany({
-      where: {
-        userId: req.user.id,
-      },
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: "List of Mission",
-      data: missions,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error,
     });
   }
 };
@@ -138,60 +132,47 @@ const getMissionDetails = async (req, res) => {
 const complete = async (req, res) => {
   try {
     const id = req.params.id;
-    const userId = req.user.id; // Ambil userId dari req.user (asumsi middleware autentikasi sudah ada)
+    const userId = req.user.id;
 
-    // Ambil misi berdasarkan ID
-    const mission = await db.mission.findFirst({
-      where: { id },
+    const userMission = await db.userMission.findFirst({
+      where: { userId, missionId: id },
+      include: { mission: true },
     });
 
-    if (!mission) {
-      return res.status(404).json({
-        success: false,
-        message: "Mission not found",
-      });
+    if (!userMission) {
+      return res
+        .status(404)
+        .json({ success: false, message: "UserMission not found" });
     }
 
-    // Update progressNo atau status
-    const updatedMission = await db.mission.update({
-      where: { id },
+    const incrementValue =
+      userMission.progressNo < userMission.mission.progressTarget ? 1 : 0;
+    const newProgress = userMission.progressNo + incrementValue;
+    const isCompleted =
+      newProgress >= userMission.mission.progressTarget ? "YES" : "NO";
+
+    const updatedUserMission = await db.userMission.update({
+      where: { id: userMission.id },
       data: {
         progressNo: {
-          increment: mission.progressNo < mission.progressTarget ? 1 : 0,
+          increment: incrementValue,
         },
-        isCompleted:
-          mission.progressNo + 1 >= mission.progressTarget ? "YES" : "NO", // Ubah kondisi penyelesaian
+        isCompleted,
       },
     });
 
-    // Periksa apakah misi sudah selesai
-    const isMissionCompleted = mission.progressNo + 1 >= mission.progressTarget;
-
-    if (isMissionCompleted && mission.rewardPoints > 0) {
-      try {
-        const updatedUser = await givePointsAndCheckLevel(
-          userId,
-          mission.rewardPoints
-        );
-        return res.status(200).json({
-          success: true,
-          message:
-            "Mission successfully completed. Points added and level checked.",
-          data: { mission: updatedMission, user: updatedUser },
-        });
-      } catch (error) {
-        return res.status(500).json({
-          success: false,
-          message: "Internal Server Error while awarding points/level",
-          error: error.message,
-        });
-      }
+    // Jika misi selesai, berikan reward poin dan cek level
+    if (isCompleted === "YES") {
+      await givePointsAndCheckLevel(
+        userId,
+        userMission.mission.rewardPoints || 0
+      );
     }
 
     return res.status(200).json({
       success: true,
       message: "Mission progress updated",
-      data: updatedMission,
+      data: updatedUserMission,
     });
   } catch (err) {
     return res.status(500).json({
@@ -203,7 +184,6 @@ const complete = async (req, res) => {
 };
 
 module.exports = {
-  getAllMission,
   getMission,
   storeMission,
   getMissionDetails,
