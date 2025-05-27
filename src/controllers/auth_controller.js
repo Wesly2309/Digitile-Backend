@@ -41,7 +41,8 @@ const register = async  (req, res)  => {
           }
         })
 
-        await assignAllMissionsToUser(newUser.id)
+        await assignAllMissionsToUser(newUser.id);
+
 
          return res.status(201).json({
           success: true,

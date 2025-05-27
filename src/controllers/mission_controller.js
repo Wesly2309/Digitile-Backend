@@ -202,7 +202,7 @@ const complete = async (req, res) => {
   }
 };
 
-const assignAllMissionsToUser = async (userId) => {
+export const assignAllMissionsToUser = async (userId) => {
   try {
     const allMissions = await db.mission.findMany();
 
@@ -240,5 +240,4 @@ module.exports = {
   storeMission,
   getMissionDetails,
   complete,
-  assignAllMissionsToUser
 };
