@@ -220,7 +220,7 @@ export const assignAllMissionsToUser = async (userId) => {
             userId,
             missionId: mission.id,
             progressNo: 0,
-            isCompleted: "NO",
+            isCompleted: false,
           },
         });
       }
