@@ -34,6 +34,28 @@ async function givePointsAndCheckLevel(userId, pointsToAdd) {
   }
 }
 
+const fetchAllMissions = async () => {
+  return await db.mission.findMany();
+};
+
+
+const getAllMission = async (req,res) => {
+  try {
+    const allmission = await fetchAllMissions();
+    return res.status(200).json({
+      success: true ,
+      message: 'List of all mission',
+      data: allmission
+    })
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: 'Internal Server Error' , 
+      error: err.message
+    })
+  }
+}
+
 const getMission = async (req, res) => {
   try {
     const existing = await db.userMission.findMany({
@@ -44,8 +66,8 @@ const getMission = async (req, res) => {
     });
 
     if (existing.length === 0) {
-      // Jika belum ada userMission, tampilkan semua mission yang ada
-      const allMissions = await db.mission.findMany();
+
+      const allMissions = await fetchAllMissions();
       return res.status(200).json({
         success: true,
         message: "List of all missions (no user missions found)",
@@ -187,6 +209,7 @@ const complete = async (req, res) => {
 
 module.exports = {
   getMission,
+  getAllMission,
   storeMission,
   getMissionDetails,
   complete,
