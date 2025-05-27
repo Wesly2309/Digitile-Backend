@@ -80,6 +80,7 @@ enum MissionType {
 }
 
 model Mission {
+
   id             String      @id @default(uuid())
   title          String
   progressNo     Int
