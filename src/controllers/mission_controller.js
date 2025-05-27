@@ -98,7 +98,6 @@ const storeMission = async (req, res) => {
         title,
         progressNo,
         progressTarget,
-        isCompleted: "NO",
         missionType,
         url,
         rewardPoints: rewardPoints, // Default rewardPoints ke 0 jika tidak disediakan
