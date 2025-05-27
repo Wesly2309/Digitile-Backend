@@ -154,7 +154,7 @@ const getMissionDetails = async (req, res) => {
 
 const complete = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = req.user.id;
     const userId = req.user.id;
 
     const userMission = await db.userMission.findFirst({
