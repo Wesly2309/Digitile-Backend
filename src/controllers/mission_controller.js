@@ -158,7 +158,7 @@ const complete = async (req, res) => {
     const userId = req.user.id;
 
     const userMission = await db.userMission.findFirst({
-      where: { userId, missionId: id },
+      where: { userId },
       include: { mission: true },
     });
 
