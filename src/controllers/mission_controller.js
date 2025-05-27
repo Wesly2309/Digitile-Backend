@@ -5,34 +5,37 @@ dotenv.config();
 // Fungsi untuk memberikan poin dan menaikkan level user
 async function givePointsAndCheckLevel(userId, pointsToAdd) {
   try {
-    const user = await db.user.update({
+    let user = await db.user.findUnique({ where: { id: userId } });
+    if (!user) throw new Error("User tidak ditemukan");
+
+    let newPoints = user.points + pointsToAdd;
+    let level = user.level;
+
+    // Hitung poin maksimum yang dibutuhkan untuk level saat ini
+    let maxPoints = 100 + (level - 1) * 20;
+
+    // Naik level selama poin cukup
+    while (newPoints >= maxPoints) {
+      newPoints -= maxPoints;
+      level++;
+      maxPoints = 100 + (level - 1) * 20;
+    }
+
+    const updatedUser = await db.user.update({
       where: { id: userId },
       data: {
-        points: {
-          increment: pointsToAdd,
-        },
+        level,
+        points: newPoints,
       },
     });
 
-    if (user.points >= 100) {
-      const updatedUser = await db.user.update({
-        where: { id: userId },
-        data: {
-          level: {
-            increment: 1,
-          },
-          points: 0,
-        },
-      });
-      return updatedUser;
-    }
-
-    return user;
+    return updatedUser;
   } catch (error) {
-    console.error("Gagal memberikan poin atau menaikkan level:", error);
-    throw error; // Re-throw error untuk ditangani di route
+    console.log("Gagal memberikan poin atau menaikkan level:", error);
+    throw error;
   }
 }
+
 
 const fetchAllMissions = async () => {
   return await db.mission.findMany();
