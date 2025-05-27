@@ -202,10 +202,43 @@ const complete = async (req, res) => {
   }
 };
 
+const assignAllMissionsToUser = async (userId) => {
+  try {
+    const allMissions = await db.mission.findMany();
+
+    for (const mission of allMissions) {
+      const existing = await db.userMission.findFirst({
+        where: {
+          userId,
+          missionId: mission.id,
+        },
+      });
+
+      if (!existing) {
+        await db.userMission.create({
+          data: {
+            userId,
+            missionId: mission.id,
+            progressNo: 0,
+            isCompleted: "NO",
+          },
+        });
+      }
+    }
+
+    return { success: true, message: "All missions assigned to user" };
+  } catch (error) {
+    console.error("Failed to assign missions:", error);
+    throw error;
+  }
+};
+
+
 module.exports = {
   getMission,
   getAllMission,
   storeMission,
   getMissionDetails,
   complete,
+  assignAllMissionsToUser
 };

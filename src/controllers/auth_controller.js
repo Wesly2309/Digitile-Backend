@@ -3,6 +3,7 @@ const bcrypt  =  require('bcrypt'
 const dotenv = require('dotenv')
 const db = require('../utils/db')
 const jwt = require('jsonwebtoken')
+const { assignAllMissionsToUser } = require('./mission_controller')
 dotenv.config()
 
 const register = async  (req, res)  => {
@@ -39,6 +40,8 @@ const register = async  (req, res)  => {
             
           }
         })
+
+        await assignAllMissionsToUser(newUser.id)
 
          return res.status(201).json({
           success: true,
