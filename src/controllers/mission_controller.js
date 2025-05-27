@@ -154,19 +154,15 @@ const getMissionDetails = async (req, res) => {
 
 const complete = async (req, res) => {
   try {
-    const id = req.params['id'];
+    const id = req.params['id'] ;
     const userId = req.user.id;
 
     const userMission = await db.userMission.findFirst({
-      where: { userId , missionId: id },
+      where: { userId , missionId: String(id) },
       include: { mission: true },
     });
 
-    if (!userMission) {
-      return res
-        .status(404)
-        .json({ success: false, message: "UserMission not found" });
-    }
+
 
     const incrementValue =
       userMission.progressNo < userMission.mission.progressTarget ? 1 : 0;
