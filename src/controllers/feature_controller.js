@@ -11,7 +11,7 @@ const leaderBoard = async (req, res) => {
         level: true,
         points: true,
       },
-      orderBy: [{ level: "desc" }],
+      orderBy: [{ level: "desc" }, {points: 'desc'}],
       take: 50,
     });
     return res.status(200).json({
