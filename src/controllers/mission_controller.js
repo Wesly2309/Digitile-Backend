@@ -94,8 +94,9 @@ const getMission = async (req, res) => {
 
 const storeMission = async (req, res) => {
   try {
-    const { title, progressNo, progressTarget, rewardPoints , missionType , url } = req.body;
+    const { title, progressNo, progressTarget, rewardPoints, missionType, url } = req.body;
 
+    // 1. Buat mission baru
     const newMission = await db.mission.create({
       data: {
         title,
@@ -103,18 +104,41 @@ const storeMission = async (req, res) => {
         progressTarget,
         missionType,
         url,
-        rewardPoints: rewardPoints, // Default rewardPoints ke 0 jika tidak disediakan
+        rewardPoints: rewardPoints || 0, // default ke 0
       },
     });
 
-    if (!newMission)
-      return res
-        .status(400)
-        .json({ success: false, message: "Something went wrong" });
+    if (!newMission) {
+      return res.status(400).json({
+        success: false,
+        message: "Something went wrong",
+      });
+    }
 
-    return res
-      .status(201)
-      .json({ success: true, message: "Mission created", data: newMission });
+    // 2. Ambil semua user
+    const users = await db.user.findMany();
+
+    // 3. Assign mission ini ke semua user
+    await Promise.all(
+      users.map((user) =>
+        db.userMission.create({
+          data: {
+            userId: user.id,
+            missionId: newMission.id,
+            progressNo: 0,
+            isCompleted: false,
+          },
+        })
+      )
+    );
+
+    // 4. Return sukses
+    return res.status(201).json({
+      success: true,
+      message: "Mission created and assigned to all users",
+      data: newMission,
+    });
+
   } catch (err) {
     return res.status(500).json({
       success: false,
@@ -123,6 +147,7 @@ const storeMission = async (req, res) => {
     });
   }
 };
+
 
 const getMissionDetails = async (req, res) => {
   try {
