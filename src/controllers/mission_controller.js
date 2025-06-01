@@ -37,7 +37,6 @@ async function givePointsAndCheckLevel(userId, pointsToAdd) {
 const getMission = async (req, res) => {
   try {
     const existing = await db.userMission.findMany({
-      where: { userId: req.user.id },
       include: {
         mission: true,
       },
