@@ -4,11 +4,12 @@ const {
   storeMission,
   getMissionDetails,
   complete,
+  getAllMission,
 } = require("../controllers/mission_controller");
 const tokenMiddleware = require("../utils/middleware");
 const router = express.Router();
 
-router.get("/all", getMission);
+router.get("/all", getAllMission);
 router.post("/store", storeMission);
 
 router.use(tokenMiddleware);
