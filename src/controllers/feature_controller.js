@@ -28,6 +28,44 @@ const leaderBoard = async (req, res) => {
   }
 };
 
+const topCapsule = async (req, res) => {
+  try {
+    const capsules = await db.user.findMany({
+      select: {
+        name: true,
+        capsules: true,
+        profile: true,
+      },
+      include: {
+        _count: {
+          select: { capsules: true },
+        },
+      },
+      orderBy: [
+        {
+          capsules: {
+            _count: "desc",
+          },
+        },
+      ],
+      take: 3,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Top user by Capsule",
+      data: capsules,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error,
+    });
+  }
+};
+
 module.exports = {
   leaderBoard,
+  topCapsule,
 };

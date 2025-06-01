@@ -1,9 +1,11 @@
 const express = require("express");
 
-const tokenMiddleware = require("../utils/middleware");
-const { leaderBoard } = require("../controllers/feature_controller");
+const {
+  leaderBoard,
+  topCapsule,
+} = require("../controllers/feature_controller");
 const router = express.Router();
 
 router.get("/leaderboard", leaderBoard);
-router.use(tokenMiddleware);
+router.get("/topbycapsule", topCapsule);
 module.exports = router;

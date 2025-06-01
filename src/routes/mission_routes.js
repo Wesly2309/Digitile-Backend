@@ -4,7 +4,6 @@ const {
   storeMission,
   getMissionDetails,
   complete,
-  getAllMission,
 } = require("../controllers/mission_controller");
 const tokenMiddleware = require("../utils/middleware");
 const router = express.Router();
