@@ -77,7 +77,6 @@ const storeMission = async (req, res) => {
         progressNo,
         progressTarget,
         missionType: missionType,
-        isCompleted: "NO",
         rewardPoints: rewardPoints, // Default rewardPoints ke 0 jika tidak disediakan
       },
     });
