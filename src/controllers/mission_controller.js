@@ -68,13 +68,15 @@ const getMission = async (req, res) => {
 
 const storeMission = async (req, res) => {
   try {
-    const { title, progressNo, progressTarget, rewardPoints } = req.body;
+    const { title, progressNo, progressTarget, rewardPoints, missionType } =
+      req.body;
 
     const newMission = await db.mission.create({
       data: {
         title,
         progressNo,
         progressTarget,
+        missionType: body.missionType,
         isCompleted: "NO",
         rewardPoints: rewardPoints, // Default rewardPoints ke 0 jika tidak disediakan
       },
